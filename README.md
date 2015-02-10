@@ -1,4 +1,5 @@
-Diez
+# Diez
+
 ![https://img.shields.io/travis/ericclemmons/diez/master.svg](https://img.shields.io/travis/ericclemmons/diez/master.svg)
 ![https://img.shields.io/npm/v/diez.svg](https://img.shields.io/npm/v/diez.svg)
 ![https://david-dm.org/ericclemmons/diez#info=dependencies](https://img.shields.io/david/ericclemmons/diez.svg)
