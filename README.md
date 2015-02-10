@@ -41,7 +41,7 @@ module.exports = Routes;
 `Routes` is currently shared across all server-side requests, as well as all
 dependencies therein.
 
-Instead, convert `Routes` from a _singleton_ into a _factory_ and use `diez.inject`
+Instead, convert `Routes` from a _singleton_ into a _factory_ and use `diez.register`
 to specify the (default) dependencies:
 
 ```javascript
@@ -57,7 +57,7 @@ var Routes = function(App, Home) {
   );
 };
 
-diez.inject(Routes, [App, Home]);
+diez.register(Routes, [App, Home]);
 
 module.exports = Routes;
 ```
@@ -73,7 +73,7 @@ var diez  = require('diez');
 var App   = require('./handlers/app');
 var Home  = require('./handlers/home');
 
-module.exports = diez.inject(function Routes(App, Home) {
+module.exports = diez.register(function Routes(App, Home) {
   return (
     <Route handler={App} path="/">
       <DefaultRoute name="home" handler={Home} />
@@ -149,7 +149,7 @@ app
 
 #### Using Diez With Other Libraries
 
-There's really no reason to use Diez to retrieve non-injected modules, but it
+There's really no reason to use Diez to retrieve non-registered modules, but it
 just shows that it's _safe_ to do so.
 
 The following are all equivalent:
@@ -182,7 +182,7 @@ An application API may be <https://example.com/api/whatever> on the client-side,
 internally can be anything, such as <http://localhost:3000>, therefore API services
 can't have hard-coded URLs or Hostnames as a result.
 
-One solution is to code your services to utilize Diez and inject them with
+One solution is to code your services to utilize Diez and register them with
 a URL prefix:
 
 ```javascript
@@ -196,7 +196,7 @@ var MyService = function(prefix) {
   };
 };
 
-diez.inject(MyService, ['api.prefix']);
+diez.register(MyService, ['api.prefix']);
 
 module.exports = MyService;
 ```
@@ -253,7 +253,7 @@ var Routes = function(App, Home) {
   );
 };
 
-diez.inject(Routes, [App, Home]);
+diez.register(Routes, [App, Home]);
 
 module.exports          = Routes;
 module.exports.factory  = diez.factory(Routes);
@@ -274,7 +274,7 @@ var MyService = function(http) {
   return { ... };
 };
 
-diez.inject(MyService, request);
+diez.register(MyService, request);
 
 module.exports = MyService;
 ```
@@ -304,7 +304,7 @@ describe('my test', function() {
   var container = diez.container();
   var http      = // Sinon or similar
 
-  container.inject(MyService, [http])
+  container.register(MyService, [http])
 
   it('should use a mock', function() {
     var mock = container.get(MyService);
