@@ -1,12 +1,12 @@
-# Diez
-
-![https://img.shields.io/travis/ericclemmons/diez/master.svg](https://img.shields.io/travis/ericclemmons/diez/master.svg)
-![https://img.shields.io/npm/v/diez.svg](https://img.shields.io/npm/v/diez.svg)
-![https://david-dm.org/ericclemmons/diez#info=dependencies](https://img.shields.io/david/ericclemmons/diez.svg)
-![https://david-dm.org/ericclemmons/diez#info=devDependencies](https://img.shields.io/david/dev/ericclemmons/diez.svg)
-====
+# Diez ![https://img.shields.io/npm/v/diez.svg](https://img.shields.io/npm/v/diez.svg?style=flat-square)
 
 > Incredibly simple, Dependency Injection for isomorphic Javascript applications.
+
+[![](https://img.shields.io/github/issues-raw/ericclemmons/diez.svg?style=flat-square)](https://github.com/ericclemmons/diez/issues)
+[![](https://img.shields.io/travis/ericclemmons/diez/master.svg?style=flat-square)](https://travis-ci.org/ericclemmons/diez)
+[![](https://img.shields.io/david/ericclemmons/diez.svg?style=flat-square)](https://david-dm.org/ericclemmons/diez#info=dependencies)
+[![](https://img.shields.io/david/dev/ericclemmons/diez.svg?style=flat-square)](https://david-dm.org/ericclemmons/diez#info=devDependencies)
+
 
 ## The Problem
 
