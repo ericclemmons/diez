@@ -1,0 +1,35 @@
+{
+  "name": "diez",
+  "version": "1.0.0",
+  "description": "Incredibly simple, Dependency Injection for isomorphic Javascript applications.",
+  "main": "index.js",
+  "dependencies": {
+    "lodash": "^2.4.1",
+    "stampit": "^1.1.0"
+  },
+  "devDependencies": {
+    "6to5": "^3.5.3",
+    "mocha": "^2.1.0"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ericclemmons/diez.git"
+  },
+  "keywords": [
+    "container",
+    "di",
+    "dic",
+    "dependency",
+    "injection",
+    "ioc"
+  ],
+  "author": "Eric Clemmons <eric@smarterspam.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ericclemmons/diez/issues"
+  },
+  "homepage": "https://github.com/ericclemmons/diez"
+}
