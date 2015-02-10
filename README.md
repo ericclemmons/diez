@@ -7,7 +7,7 @@ Diez
 
 When using libraries such as [React][1], [React Router][2], & [RefluxJS][3],
 you'll find that **singletons don't work well on the server-side**
-for Actions, Routes, Stores, & Views.
+for Actions, Routes, Stores, & Views, as they share state between all requests.
 
 _On the client-side, each user's browser serves as a container to scope
 functions.  Similarly, Diez introduces a container for each request on the server._
@@ -16,7 +16,9 @@ functions.  Similarly, Diez introduces a container for each request on the serve
 ## The Solution
 
 Luckily, all it takes is to turn your _singletons_ into _factories_ by wrapping
-them with `function(...) { return ...; }` & using Diez to retrieve them.
+them with `function(...) { return ...; }`.
+
+Diez will retrieve them while **isolating instances to a single container-per-request**.
 
 
 ### Getting Started
