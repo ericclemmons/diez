@@ -1,16 +1,52 @@
 var diez  = require('../../../');
 var React = require('react');
 
-module.exports = diez.register(function(request) {
-  var Welcome = React.createClass({
+var Welcome = function(request, url) {
+  return React.createClass({
     render() {
       return (
-        <header>
-          <h1>{'Howdy'}</h1>
-        </header>
+        <section>
+          <div className="jumbotron">
+            <div className="container">
+              <h1>Welcome!</h1>
+
+              <p>
+                You're visiting from
+
+                <code>
+                  {request.ip}
+                </code>
+
+                with:
+
+                <pre>
+                  <code>
+                    {request.get('User-Agent')}
+                  </code>
+                </pre>
+              </p>
+
+              <p>
+                <a href={url} target="_blank" className="btn btn-success">
+                  View Source
+                </a>
+              </p>
+            </div>
+          </div>
+
+          <div className="container">
+            <p>
+              <em>
+                These components are using per-<code>request</code> information injected via Diez.
+              </em>
+            </p>
+          </div>
+        </section>
       );
     }
   });
+};
 
-  return Welcome;
-}, ['request']);
+diez.register(Welcome, ['request', 'url']);
+
+module.exports = Welcome;

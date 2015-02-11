@@ -13,11 +13,12 @@ app
   .use(function(req, res, next) {
     req.container = diez.container();
 
+    req.container.register('request', req);
+    req.container.register('url', util.format('view-source:%s://%s:%s%s', req.protocol, req.hostname, app.get('port'), req.originalUrl))
+
     next();
   })
   .get('/', function(req, res, next) {
-    req.container.set('title', `${req.url} - Isomorphic Diez Express Example`);
-
     Router.create({
       routes:   req.container.get(Routes),
       location: req.url

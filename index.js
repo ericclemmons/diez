@@ -1,3 +1,3 @@
-var container = require('./lib/container');
+var diez = require('./lib/diez');
 
-module.exports = container(); // Root container
+module.exports = diez(); // Root container

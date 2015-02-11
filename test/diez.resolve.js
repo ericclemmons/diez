@@ -1,7 +1,7 @@
 var assert  = require('assert');
 var diez    = require('..');
 
-describe('.get', function() {
+describe('.resolve', function() {
   describe('when given a reference', function() {
     beforeEach(function() {
       this.container  = diez.container();
@@ -15,12 +15,12 @@ describe('.get', function() {
         this.container.register(this.factory, [this.request, this.response]);
       });
 
-      it('should return the same instance', function() {
-        var a = this.container.get(this.factory);
-        var b = this.container.get(this.factory);
+      it('should return a new instance each time', function() {
+        var a = this.container.resolve(this.factory);
+        var b = this.container.resolve(this.factory);
 
         assert.deepEqual(a, b);
-        assert.equal(a, b);
+        assert.notEqual(a, b);
       });
 
       describe('with registered dependencies', function() {
@@ -29,12 +29,12 @@ describe('.get', function() {
           this.container.register(this.response);
         });
 
-        it('should return the same instantiated dependencies each time', function() {
-          var a = this.container.get(this.factory);
-          var b = this.container.get(this.factory);
+        it('should instantiate dependencies', function() {
+          var a = this.container.resolve(this.factory);
+          var b = this.container.resolve(this.factory);
 
-          assert.equal(a[0], b[0]);
-          assert.equal(a[1], b[1]);
+          assert.deepEqual(a[0], b[0]);
+          assert.deepEqual(a[1], b[1]);
         });
       });
 
@@ -43,19 +43,19 @@ describe('.get', function() {
           this.child = this.container.container();
         });
 
-        it('should return the same instance', function() {
-          var a = this.child.get(this.factory);
-          var b = this.child.get(this.factory);
+        it('should return a new instance each time', function() {
+          var a = this.child.resolve(this.factory);
+          var b = this.child.resolve(this.factory);
 
           assert.deepEqual(a, b);
-          assert.equal(a, b);
+          assert.notEqual(a, b);
         });
       });
     });
 
     describe('that is not registered', function() {
       it('should throw an error', function() {
-        assert.throws(this.container.get.bind(this.container, this.factory));
+        assert.throws(this.container.resolve.bind(this.container, this.factory));
       });
     });
   });

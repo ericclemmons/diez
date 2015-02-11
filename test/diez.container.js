@@ -2,19 +2,21 @@ var assert  = require('assert');
 var diez    = require('..');
 
 describe('.container', function() {
-  var child = diez.container();
+  beforeEach(function() {
+    this.container = diez.container();
+  });
 
   it('should set `parent`', function() {
-    assert(child.parent);
+    assert(this.container.parent);
   });
 
   it('should be a child of the parent', function() {
-    assert.equal(diez, child.parent);
+    assert.equal(this.container.parent, diez);
   });
 
   it('should have a \'container\' alias that references itself', function() {
-    assert(child.has('container'));
-    assert.equal(child, child.get('container'));
+    assert(this.container.contains('container'));
+    assert.equal(this.container.get('container'), this.container);
   });
 });
 

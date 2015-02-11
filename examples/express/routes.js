@@ -9,10 +9,14 @@ var {
   DefaultRoute
 } = require('react-router');
 
-module.exports = diez.register(function(App, Welcome) {
+var Routes = function(App, Welcome) {
   return (
     <Route handler={App} path="/">
       <DefaultRoute name="welcome" handler={Welcome} />
     </Route>
   );
-}, [App, Welcome]);
+};
+
+diez.register(Routes, [App, Welcome]);
+
+module.exports = Routes;
