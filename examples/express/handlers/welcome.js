@@ -27,7 +27,7 @@ var Welcome = function(request, url) {
               </p>
 
               <p>
-                <a href={url} target="_blank" className="btn btn-success">
+                <a href={'view-source:' + url} target="_blank" className="btn btn-success">
                   View Source
                 </a>
               </p>

@@ -14,7 +14,7 @@ app
     req.container = diez.container();
 
     req.container.register('request', req);
-    req.container.register('url', util.format('view-source:%s://%s:%s%s', req.protocol, req.hostname, app.get('port'), req.originalUrl))
+    req.container.register('url', util.format('%s://%s:%s%s', req.protocol, req.hostname, app.get('port'), req.originalUrl))
 
     next();
   })
