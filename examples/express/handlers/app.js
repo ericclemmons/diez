@@ -27,7 +27,7 @@ var App = React.createClass({
         <div className="container">
           <div className="navbar-header">
             <Link to="welcome" className="navbar-brand">
-              Diez Express Example
+              Server-side React with Diez & Express
             </Link>
           </div>
         </div>

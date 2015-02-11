@@ -21,304 +21,120 @@ functions.  Similarly, Diez introduces a container for each request on the serve
 ## The Solution
 
 Luckily, all it takes is to turn your _singletons_ into _factories_ by wrapping
-them with `function(...) { return ...; }`.
+them with `function(...) { return ...; }` & registering them via `diez.register`.
 
 Diez will retrieve them while **isolating instances to a single container-per-request**.
 
 
+### Example
+
+- [Server-side React with Diez & Express][4]
+
+
 ### Getting Started
 
-Suppose you're using [React Router][2] and have a `routes.jsx` file:
+Suppose you're rendering your [React][1] view on the server with [React Router][2],
+but rely on `request`-specific data, such as the user's `ip`, for some reason.
+
+
+#### Step 1 - Create a container per request
+
+In your application middleware:
 
 ```javascript
-var App   = require('./handlers/app');
-var Home  = require('./handlers/home');
-
-var Routes = (
-  <Route handler={App} path="/">
-    <DefaultRoute name="home" handler={Home} />
-  </Route>
-);
-
-module.exports = Routes;
+// server.js
+app.use(function(req, res, next) {
+  // This container & it's references are sandboxed to this request.
+  req.container = diez.container();
+  req.container.register('request', req);
+});
 ```
 
-`Routes` is currently shared across all server-side requests, as well as all
-dependencies therein.
+Now, every call to `req.container.get('request')` returns `req`.
 
-Instead, convert `Routes` from a _singleton_ into a _factory_ and use `diez.register`
-to specify the (default) dependencies:
+
+#### Step 2 - Inject [React][1] components with dependencies
+
+**Before**, your view is a singleton:
 
 ```javascript
-var diez  = require('diez');
-var App   = require('./handlers/app');
-var Home  = require('./handlers/home');
+// MyView.js
+var MyView = React.createClass({
+  render: function() {
+    <p>
+      Hello!
+    </p>
+  }
+});
 
-var Routes = function(App, Home) {
-  return (
-    <Route handler={App} path="/">
-      <DefaultRoute name="home" handler={Home} />
-    </Route>
-  );
-};
-
-diez.register(Routes, [App, Home]);
-
-module.exports = Routes;
+module.exports = MyView;
 ```
 
-This is an incredibly common way of writing libraries (e.g. `express`, `koa`, etc.)
-for scoped consumption, but pushing the dependency requirements onto the consumer
-is burdensome without the use of a container to resolve them.
-
-Still, in even _fewer_ lines of code:
+**After**, your view is a factory with dependencies defined:
 
 ```javascript
-var diez  = require('diez');
-var App   = require('./handlers/app');
-var Home  = require('./handlers/home');
-
-module.exports = diez.register(function Routes(App, Home) {
-  return (
-    <Route handler={App} path="/">
-      <DefaultRoute name="home" handler={Home} />
-    </Route>
-  );
-}, [App, Home]);
-```
-
-Now that our routes are turned into container-aware factories,
-let's modify how the server's _middleware_ uses this.
-
-Instead of:
-
-```javascript
-app
-  .use(function *(next) {
-    Router.create({
-      routes:   Routes, // Singleton! Oh noooos!
-      location: this.url,
-    }).run(function(Handler, state) {
-      ...
-    });
-  })
-;
-```
-
-Get the `Routes` from a `container`:
-
-```javascript
-app
-  .use(function *(next) {
-    this.container = diez.container();
-  })
-  .use(function *(next) {
-    Router.create({
-      routes:   this.container.get(Routes),
-      location: this.url,
-    }).run(function(Handler, state) {
-      ...
-    });
-  })
-;
-```
-
-This container isolates the scope of all returned objects (& their dependencies)
-from other containers.
-
-
-### Examples
-
-
-#### Using Diez as a Middleware
-
-The ideal use for Diez is as a _container_ to isolate scope between requests
-on the server, just as they are in the browser on the client.
-
-```javascript
-var app     = require('koa')(); // or Express
-var MyStore = require('./stores/my.store');
-
-app
-  .use(function *(next) {
-    this.container = diez.container();
-    yield next;
-  })
-  // ... some other middleware & events take place ...
-  .use(function *(next) {
-    this.body = this.container.get(MyStore).getStuffForSession(...);
-  })
-;
-```
-
-
-#### Using Diez With Other Libraries
-
-There's really no reason to use Diez to retrieve non-registered modules, but it
-just shows that it's _safe_ to do so.
-
-The following are all equivalent:
-
-```javascript
-var myObj = { 'foo': true, 'bar': false };
-
-myObj === diez.get(myObj);
-```
-
-```javascript
-var express = require('express');
-
-var app = express();
-// or
-diez.get(express)();
-```
-
-```javascript
-var knex = require('knex');
-
-var db = knex('table_name');
-// or
-var db = diez.get(knex)('table_name');
-```
-
-#### Dynamic API URLs with Diez
-
-An application API may be <https://example.com/api/whatever> on the client-side, but
-internally can be anything, such as <http://localhost:3000>, therefore API services
-can't have hard-coded URLs or Hostnames as a result.
-
-One solution is to code your services to utilize Diez and register them with
-a URL prefix:
-
-```javascript
+// MyView.js
 var diez = require('diez');
 
-var MyService = function(prefix) {
-  return {
-    find: function(id) {
-      return request.get(`${prefix}/api/whatever/${prefix}`);
+// Convert singleton to factory
+var MyView = function(request) {
+  return React.createClass({
+    render: function() {
+      <p>
+        Hello, {request.ip}!
+      </p>
     }
-  };
-};
-
-diez.register(MyService, ['api.prefix']);
-
-module.exports = MyService;
-```
-
-Then, in a middleware of your application:
-
-```javascript
-var app   = require('koa')();
-var diez  = require('diez');
-var util  = require('util');
-
-app
-  .use(function *(next) {
-    this.container = diez.container();
-    yield next;
-  })
-  .use(function *(next) {
-    this.container.set('api.prefix', url.format({
-      host:     this.host,
-      port:     this.port,
-      protocol: this.protocol,
-    })); // http://localhost:3000/
-
-    yield next;
-  })
-  // ... some other middleware & events take place ...
-  .use(function *(next) {
-    this.body = yield this.container.get(MyService).find(1);
-  })
-;
-```
-
-This way, the `MyService` will correctly request <http://localhost:3000/api/whatever/1>
-on the server, and <http://example.com/api/whatever/1> on the client.
-
-
-#### Removing Diez as a Code Smell
-
-The consuming application shouldn't be required to be aware of Diez to use your
-library.
-
-Therefore, it's recommended that you export a factory with your defaults:
-
-```javascript
-var diez  = require('diez');
-var App   = require('./handlers/app');
-var Home  = require('./handlers/home');
-
-var Routes = function(App, Home) {
-  return (
-    <Route handler={App} path="/">
-      <DefaultRoute name="home" handler={Home} />
-    </Route>
-  );
-};
-
-diez.register(Routes, [App, Home]);
-
-module.exports          = Routes;
-module.exports.factory  = diez.factory(Routes);
-```
-
-Now any consuming services instead use `Routes.factory()` without depending on `diez`.
-
-
-### Testing with Diez
-
-Suppose you have a service that depends on an HTTP library for making requests:
-
-```javascript
-var diez    = require('diez');
-var request = require('superagent');
-
-var MyService = function(http) {
-  return { ... };
-};
-
-diez.register(MyService, request);
-
-module.exports = MyService;
-```
-
-The vanilla way to do this would be:
-
-```javascript
-var MyService = require('./my-service');
-
-describe('my test', function() {
-  it('should use a mock', function() {
-    var http = // Sinon or similar
-    var mock = MyService(http);
-
-    // Test the mock...
   });
+};
+
+// Register component with dependencies
+diez.register(MyView, ['request']);
+
+module.exports = MyView;
+```
+
+
+#### Step 3 - Retrieve instances of components from container
+
+```javascript
+app.get('/', function(req, res) {
+  // Get instantiated MyView with dependencies injected
+  var component = req.container.get(MyView);
+  var element   = React.createElement(view);
+
+  res.send(React.renderToString(element));
 });
 ```
 
-Alternatively, you can create a new container to override the dependencies:
+That's it!
 
-```javascript
-var diez      = require('diez');
-var MyService = require('./my-service');
+## [License][5]
 
-describe('my test', function() {
-  var container = diez.container();
-  var http      = // Sinon or similar
+> The MIT License (MIT)
+>
+> Copyright (c) 2015 Eric Clemmons
+>
+> Permission is hereby granted, free of charge, to any person obtaining a copy
+> of this software and associated documentation files (the "Software"), to deal
+> in the Software without restriction, including without limitation the rights
+> to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+> copies of the Software, and to permit persons to whom the Software is
+> furnished to do so, subject to the following conditions:
+>
+> The above copyright notice and this permission notice shall be included in all
+> copies or substantial portions of the Software.
+>
+> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+> IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+> FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+> LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+> OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+> SOFTWARE.
 
-  container.register(MyService, [http])
-
-  it('should use a mock', function() {
-    var mock = container.get(MyService);
-
-    // Test the mock...
-  });
-});
-```
 
 [1]: http://facebook.github.io/react/
 [2]: https://github.com/rackt/react-router
 [3]: https://github.com/spoike/refluxjs/
+[4]: https://github.com/ericclemmons/diez/tree/master/examples/express
+[5]: https://github.com/ericclemmons/diez/blob/master/LICENSE
