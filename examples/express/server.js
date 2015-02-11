@@ -1,4 +1,6 @@
-require("6to5/register");
+require("6to5/register")({
+  only: /examples/
+});
 
 var app   = require('./app');
 var diez  = require('../../');
