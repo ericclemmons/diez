@@ -12,9 +12,7 @@ var Routes  = require('./routes');
 app
   .use(function(req, res, next) {
     req.container = diez.container();
-
     req.container.register('request', req);
-    req.container.register('url', util.format('%s://%s:%s%s', req.protocol, req.hostname, app.get('port'), req.originalUrl))
 
     next();
   })

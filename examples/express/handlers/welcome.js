@@ -1,7 +1,7 @@
 var diez  = require('../../../');
 var React = require('react');
 
-var Welcome = function(request, url) {
+var Welcome = function(request) {
   return React.createClass({
     render() {
       return (
@@ -27,9 +27,9 @@ var Welcome = function(request, url) {
               </p>
 
               <p>
-                <a href={'view-source:' + url} target="_blank" className="btn btn-success">
-                  View Source
-                </a>
+                <small>
+                  View the source :)
+                </small>
               </p>
             </div>
           </div>
@@ -47,6 +47,6 @@ var Welcome = function(request, url) {
   });
 };
 
-diez.register(Welcome, ['request', 'url']);
+diez.register(Welcome, ['request']);
 
 module.exports = Welcome;
