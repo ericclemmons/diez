@@ -26,9 +26,9 @@ them with `function(...) { return ...; }` & registering them via `diez.register`
 Diez will retrieve them while **isolating instances to a single container-per-request**.
 
 
-### Example
+### Demo
 
-- [Server-side React with Diez & Express][4]
+- [Server-side React with Diez & Express][4] ([source][5])
 
 
 ### Getting Started
@@ -108,7 +108,7 @@ app.get('/', function(req, res) {
 
 That's it!
 
-## [License][5]
+## [License][6]
 
 > The MIT License (MIT)
 >
@@ -136,5 +136,6 @@ That's it!
 [1]: http://facebook.github.io/react/
 [2]: https://github.com/rackt/react-router
 [3]: https://github.com/spoike/refluxjs/
-[4]: https://github.com/ericclemmons/diez/tree/master/examples/express
-[5]: https://github.com/ericclemmons/diez/blob/master/LICENSE
+[4]: https://protected-castle-7387.herokuapp.com/
+[5]: https://github.com/ericclemmons/diez/tree/master/examples/express
+[6]: https://github.com/ericclemmons/diez/blob/master/LICENSE

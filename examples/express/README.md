@@ -1,6 +1,9 @@
 # Server-side React with Diez & Express
 
-![](screenshot.png)
+> ![](screenshot.png)
+
+### [Demo][4] ([source][5])
+
 
 ### Usage
 
@@ -13,3 +16,6 @@ Run:
 Open:
 
 > <http://localhost:3000/>
+
+[4]: https://protected-castle-7387.herokuapp.com/
+[5]: https://github.com/ericclemmons/diez/tree/master/examples/express
