@@ -39,6 +39,12 @@ Suppose you're rendering your [React][1] view on the server with [React Router][
 but rely on `request`-specific data, such as the user's `ip`, for some reason.
 
 
+### Step 0 - Install Diez
+
+```shell
+$ npm install --save diez
+```
+
 ### Step 1 - Create a container per request
 
 In your application middleware:
