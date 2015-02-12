@@ -25,19 +25,21 @@ them with `function(...) { return ...; }` & registering them via `diez.register`
 
 Diez will retrieve them while **isolating instances to a single container-per-request**.
 
+- - -
 
-### Demo
+## Demo
 
 - [Server-side React with Diez & Express][4] ([source][5])
 
+- - -
 
-### Getting Started
+## Getting Started
 
 Suppose you're rendering your [React][1] view on the server with [React Router][2],
 but rely on `request`-specific data, such as the user's `ip`, for some reason.
 
 
-#### Step 1 - Create a container per request
+### Step 1 - Create a container per request
 
 In your application middleware:
 
@@ -53,7 +55,7 @@ app.use(function(req, res, next) {
 Now, every call to `req.container.get('request')` returns `req`.
 
 
-#### Step 2 - Inject [React][1] components with dependencies
+### Step 2 - Inject [React][1] components with dependencies
 
 **Before**, your view is a singleton:
 
@@ -94,7 +96,7 @@ module.exports = MyView;
 ```
 
 
-#### Step 3 - Retrieve instances of components from container
+### Step 3 - Retrieve injected components
 
 ```javascript
 app.get('/', function(req, res) {
@@ -107,6 +109,8 @@ app.get('/', function(req, res) {
 ```
 
 That's it!
+
+- - -
 
 ## [License][6]
 
