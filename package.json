@@ -1,6 +1,6 @@
 {
   "name": "diez",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Incredibly simple, Dependency Injection for isomorphic Javascript applications.",
   "main": "index.js",
    "engines": {
