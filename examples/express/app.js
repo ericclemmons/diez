@@ -22,7 +22,7 @@ app
       location: req.url
     }).run(function(Handler) {
       var element   = React.createElement(Handler);
-      var content   = React.renderToString(element);
+      var content   = React.renderToStaticMarkup(element);
       var noscript  = /<noscript>[\S\s.]*<\/noscript>/m;
 
       res.send(layout.replace(noscript, content));
